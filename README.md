@@ -95,3 +95,5 @@ from rise import plots as p
 
 p.plot_shap(out_mod, save_path="./")
 ```
+
+![]([http://url/to/img.png](https://github.com/ellenxtan/RISE/blob/main/fig_rise.pdf)
