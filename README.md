@@ -12,7 +12,7 @@ pip install .
 Tensorflow, Keras, sklearn, SHAP (SHapley Additive exPlanations), pandas, numpy, and all of their respective dependencies. 
 
 
-## An example to run RISE 
+## Examples to run RISE 
 
 ### With default parameters (no tuning)
 
