@@ -29,15 +29,6 @@ import collections
 
 # pd.options.mode.chained_assignment = None  # default='warn'
 
-# Keras and TensorFlow options
-layers = [2,3]
-nodes=[256,512,1024]
-dropouts=[0.2] #,0.4
-acts = ["sigmoid","relu"]
-opts = ["adam","nadam"]
-bsizes = [32,64] #,128
-n_epochs = [50,100] #,200
-
 
 def set_random(seed_value):
     os.environ['PYTHONHASHSEED']=str(seed_value)
@@ -117,8 +108,7 @@ def keras_wrap(x_train, train_labels, train_wts, x_test, loss_fn, act_out,
 
 
 def hyper_tuning(x_train, train_labels, train_wts, loss_fn, act_out,
-                 layers, nodes, dropouts, acts, opts, bsizes, n_epochs, 
-                 n_cv=5, n_jobs=1):
+                 param_grid, n_cv=5, n_jobs=1):
     """
     layers = [2,3]
     nodes=[100,300,512]
@@ -129,8 +119,7 @@ def hyper_tuning(x_train, train_labels, train_wts, loss_fn, act_out,
     n_epochs = [50,100] #,200
 
     bst_params = hyper_tuning(x_train, train_labels, train_wts, loss_fn, act_out,
-                              layers, nodes, dropouts, acts, opts, bsizes, n_epochs, 
-                              n_cv=5, n_jobs=1)
+                              param_grid, n_cv=5, n_jobs=1)
     """
     # set input_dim for the number of features
     if len(x_train.shape) == 1:
@@ -138,29 +127,38 @@ def hyper_tuning(x_train, train_labels, train_wts, loss_fn, act_out,
     else:
         input_dim = x_train.shape[1]
     
-    def create_model(layers,nodes,acts,opts,dropouts):
+    def create_model(layers,nodes,activation,optimizer,dropout):
         model = Sequential()
         for i in range(layers):
             if i==0:
                 model.add(Dense(nodes, input_dim=input_dim))
-                model.add(Activation(acts))
-                model.add(Dropout(dropouts))
+                model.add(Activation(activation))
+                model.add(Dropout(dropout))
             else:
-                model.add(Dense(nodes, activation=acts)) 
-                model.add(Activation(acts))
-                model.add(Dropout(dropouts))
+                model.add(Dense(nodes, activation=activation)) 
+                model.add(Activation(activation))
+                model.add(Dropout(dropout))
     
         model.add(Dense(units=1, activation=act_out))
-        model.compile(optimizer=opts, loss=loss_fn)
+        model.compile(optimizer=optimizer, loss=loss_fn)
         return model
 
     if act_out == "sigmoid": #for classification
-        model = KerasClassifier(build_fn=create_model, verbose=2)
+        model = KerasClassifier(build_fn=create_model, verbose=0)
     else: #None #for regression including quantile
-        model = KerasRegressor(build_fn=create_model, verbose=2)
+        model = KerasRegressor(build_fn=create_model, verbose=0)
     
-    param_grid = dict(layers=layers, nodes=nodes, acts=acts, opts=opts, 
-                      dropouts=dropouts, bsizes=bsizes, n_epochs=n_epochs)
+    assert param_grid is not None
+    layers = param_grid['layers']
+    nodes = param_grid['nodes']
+    dropout = param_grid['dropouts']
+    activation = param_grid['acts']
+    optimizer = param_grid['opts']
+    bsizes = param_grid['bsizes']
+    n_epochs = param_grid['n_epochs']
+
+    param_grid = dict(layers=layers, nodes=nodes, activation=activation, optimizer=optimizer, 
+                      dropout=dropout, batch_size=bsizes, epochs=n_epochs)
     grid = GridSearchCV(estimator=model, param_grid=param_grid, cv=n_cv, n_jobs=n_jobs)
     
     grid_result = grid.fit(x_train, train_labels, sample_weight=train_wts)
@@ -170,16 +168,16 @@ def hyper_tuning(x_train, train_labels, train_wts, loss_fn, act_out,
     bst_params = grid_result.best_params_
     layer = bst_params['layers']
     node = bst_params['nodes']
-    dropout = bst_params['dropouts']
-    n_epoch = bst_params['n_epochs']
-    bsize = bst_params['bsizes']
-    act = bst_params['acts']
-    opt = bst_params['opts']
+    dropout = bst_params['dropout']
+    n_epoch = bst_params['epochs']
+    bsize = bst_params['batch_size']
+    act = bst_params['activation']
+    opt = bst_params['optimizer']
 
     return layer, node, dropout, n_epoch, bsize, act, opt
 
 
-def fit_expectation(obj_name, df, use_covars, df_pred, is_tune, is_class, df_val=None):
+def fit_expectation(obj_name, df, use_covars, df_pred, is_class, is_tune, param_grid, df_val=None):
     """E(Y|X=x,A=a) or E(Y|X=x,S=s,A=a)
     (model separated by A)
     """
@@ -199,8 +197,7 @@ def fit_expectation(obj_name, df, use_covars, df_pred, is_tune, is_class, df_val
     if is_tune:
         layer, node, dropout, n_epoch, bsize, act, opt = \
                 hyper_tuning(df_tr[use_covars], df_tr["Y"], None, loss_fn, act_out,
-                    layers, nodes, dropouts, n_epochs, bsizes, acts, opts, 
-                    n_cv=5, n_jobs=1)
+                    param_grid, n_cv=5, n_jobs=1)
         Yhat, _, regr = keras_wrap(df_tr[use_covars], df_tr["Y"], None, 
                             df_te[use_covars], loss_fn, act_out, 
                             layer, node, dropout, n_epoch, bsize, act, opt, 
@@ -235,7 +232,7 @@ def fit_expectation(obj_name, df, use_covars, df_pred, is_tune, is_class, df_val
     return(Yhat, regr)
 
 
-def fit_quantile(x_train, train_labels, x_test, q, is_tune):
+def fit_quantile(x_train, train_labels, x_test, q, is_tune, param_grid):
     """
     quantile regression: yhat | X,A
     """
@@ -250,8 +247,7 @@ def fit_quantile(x_train, train_labels, x_test, q, is_tune):
     if is_tune:
         layer, node, dropout, n_epoch, bsize, act, opt = \
                     hyper_tuning(x_train, train_labels, None, loss_fn, act_out,
-                        layers, nodes, dropouts, n_epochs, bsizes, acts, opts, 
-                        n_cv=5, n_jobs=1)
+                        param_grid, n_cv=5, n_jobs=1)
         pred_test, _, model = keras_wrap(x_train, train_labels, None, 
                         x_test, loss_fn, act_out, 
                         layer, node, dropout, n_epoch, bsize, act, opt, 
@@ -319,7 +315,7 @@ def get_label_wt(g1, g0):
     return(label, weight)
 
 
-def class_pred(df_train, df_test, use_covars, label, weight, is_tune, s_type):
+def class_pred(df_train, df_test, use_covars, label, weight, s_type, is_tune, param_grid):
     """binary classification with sample weights for decision rule by Keras
     """
     df_tr = df_train.copy()
@@ -332,8 +328,7 @@ def class_pred(df_train, df_test, use_covars, label, weight, is_tune, s_type):
     if is_tune:
         layer, node, dropout, n_epoch, bsize, act, opt = \
                     hyper_tuning(df_tr[use_covars], label, weight, loss_fn, act_out,
-                        layers, nodes, dropouts, n_epochs, bsizes, acts, opts, 
-                        n_cv=5, n_jobs=1)
+                        param_grid, n_cv=5, n_jobs=1)
         prob_test, prob_train, model = keras_wrap(df_tr[use_covars], label, weight, 
                         df_te[use_covars], loss_fn, act_out, 
                         layer, node, dropout, n_epoch, bsize, act, opt, 

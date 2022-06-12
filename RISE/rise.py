@@ -13,20 +13,22 @@ class output:
 
 
 class out_model:
-    def __init__(self, seed, df, df_test, X_names, y_qua, w_qua, is_tune, s_type):
+    def __init__(self, seed, df, df_test, X_names, y_qua, w_qua, s_type, is_tune, param_grid):
         self.seed = seed
         self.df = df
         self.df_test = df_test
         self.X_names = X_names
         self.y_qua = y_qua
         self.w_qua = w_qua
-        self.is_tune = is_tune
         self.s_type = s_type
+        self.is_tune = is_tune
+        self.param_grid = param_grid
 
 
 def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, s_type, 
-         qua_use=None, is_tune=False, is_plot=True, seed=12345):
+         qua_use=None, is_tune=False, param_grid=None, is_plot=True, seed=12345):
 
+    # sanity check
     try: 
         assert s_type in ["cont", "disc", "multi-disc"]
     except:
@@ -34,7 +36,20 @@ def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, 
 
     if s_type in ["disc", "multi-disc"]:
         qua_use = None
+    
+    if is_tune:
+        try:
+            assert param_grid is not None
+        except:
+            sys.exit('when is_tune=True, param_grid should not be None')
+    else:
+        param_grid = None
 
+    # default values
+    is_sim = False
+    proj, y_fn = None, None
+
+    # reorganize data
     train_df.rename(columns={Y_name:"Y"}, inplace=True)
     test_df.rename(columns={Y_name:"Y"}, inplace=True)
 
@@ -47,10 +62,12 @@ def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, 
         test_df["A"] = np.where(test_df["A"]==a0, 0, 1)
 
     XS_names = S_names + X_names
-    is_sim = False
 
-    # discrete var has <=5 values
-    names_to_norm = list(train_df[XS_names].nunique()[train_df[XS_names].nunique() > 5].index)
+    # discrete var has <=5 values #TODO: may need to change in future
+    if s_type == "cont":
+        names_to_norm = list(train_df[XS_names].nunique()[train_df[XS_names].nunique() > 5].index)
+    else: # not normalize S if disc/multi-disc
+        names_to_norm = list(train_df[X_names].nunique()[train_df[X_names].nunique() > 5].index)
 
     set_random(seed)
 
@@ -110,14 +127,14 @@ def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, 
 
     # QUA/INF E(Y|X,S,A)
     set_random(seed)
-    df0["Yhat"], fit_Y_XS_A0 = fit_expectation("E(Y|X,S,A=0)", df0, XS_names, df0, is_tune, is_class, df0_te)
-    df1["Yhat"], fit_Y_XS_A1 = fit_expectation("E(Y|X,S,A=1)", df1, XS_names, df1, is_tune, is_class, df1_te)
+    df0["Yhat"], fit_Y_XS_A0 = fit_expectation("E(Y|X,S,A=0)", df0, XS_names, df0, is_class, is_tune, param_grid, df0_te)
+    df1["Yhat"], fit_Y_XS_A1 = fit_expectation("E(Y|X,S,A=1)", df1, XS_names, df1, is_class, is_tune, param_grid, df1_te)
 
     fit_qua0, fit_qua1 = None, None
     if (s_type == "cont"): # quantile: Yhat|X,A (no S)
         set_random(seed)
-        fit_qua0, g_qua0 = fit_quantile(df0[X_names], df0["Yhat"], df[X_names], qua_use, is_tune)
-        fit_qua1, g_qua1 = fit_quantile(df1[X_names], df1["Yhat"], df[X_names], qua_use, is_tune)
+        fit_qua0, g_qua0 = fit_quantile(df0[X_names], df0["Yhat"], df[X_names], qua_use, is_tune, param_grid)
+        fit_qua1, g_qua1 = fit_quantile(df1[X_names], df1["Yhat"], df[X_names], qua_use, is_tune, param_grid)
 
     if (s_type == "disc"): # infinite: try all s and find s that helps achieve a minimal
         g_qua0 = fit_infinite(df, X_names, XS_names, fit_Y_XS_A0)
@@ -125,10 +142,10 @@ def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, 
 
     y_qua, w_qua = get_label_wt(g_qua1, g_qua0)
     set_random(seed)
-    A_te, A_tr, model_rise = class_pred(df, df_test, X_names, y_qua, w_qua, is_tune, s_type)
+    A_te, A_tr, model_rise = class_pred(df, df_test, X_names, y_qua, w_qua, s_type, is_tune, param_grid)
 
     if is_plot:
-        out_mod = out_model(seed, df, df_test, X_names, y_qua, w_qua, is_tune, s_type)
+        out_mod = out_model(seed, df, df_test, X_names, y_qua, w_qua, s_type, is_tune, param_grid)
     else:
         out_mod = None
 
@@ -141,7 +158,6 @@ def rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, 
     A_name = 'A_rise'
     M_name = 'M_opt'
     df_test[A_name] = A_te
-    proj, y_fn = None, None
 
     # get optimal S given X (QUA/INF optimal)
     if s_type in ["cont", "disc"]:
