@@ -96,4 +96,4 @@ from rise import plots as p
 p.plot_shap(out_mod, save_path="./")
 ```
 
-![shap_plot](fig_rise.pdf)
+![fig_rise.png](https://github.com/ellenxtan/RISE/blob/main/fig_rise.png)
