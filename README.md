@@ -17,7 +17,9 @@ is_class = False
 s_type = "cont"
 qua_use = 0.25
 
-out, out_mod = r.rise(train_df, test_df, Y_name, A_name, X_names, S_names, is_rct, is_class, s_type, qua_use, is_tune=False, is_plot=True, seed=12345)
+out, out_mod = r.rise(train_df, test_df, Y_name, A_name, X_names, S_names, 
+                      is_rct, is_class, s_type, qua_use, 
+                      is_tune=False, is_plot=True, seed=12345)
 ```
 
 
