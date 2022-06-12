@@ -9,6 +9,6 @@ setup(name='rise',
       license='MIT',
       packages=['rise'],
     #   install_requires=[
-    #       'pandas','numpy','tensorflow','keras','sklearn'
+    #       'pandas','numpy','tensorflow','keras','sklearn','shap'
     #   ],
       zip_safe=False)
