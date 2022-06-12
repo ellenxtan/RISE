@@ -8,7 +8,7 @@ setup(name='rise',
       author_email='xit31@pitt.edu',
       license='MIT',
       packages=['rise'],
-      install_requires=[ #TODO
-          'pandas','numpy','tensorflow','keras','sklearn','lifelines','scipy'
+      install_requires=[
+          'pandas','numpy','tensorflow','keras','sklearn'
       ],
       zip_safe=False)

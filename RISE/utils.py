@@ -1,40 +1,22 @@
 import os
-# os.environ['TF2_BEHAVIOR'] = '1'
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import random
 import pandas as pd
 import numpy as np
 
-# import warnings
-# warnings.filterwarnings('ignore',category=FutureWarning)
-# warnings.filterwarnings('ignore', category=DeprecationWarning)
-
 ## https://developer.apple.com/metal/tensorflow-plugin/
 ## /Users/xtan/miniforge3/bin/python3
 import tensorflow as tf
-# tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-# tf.get_logger().setLevel('ERROR')
-# tf.compat.v1.disable_v2_behavior()  #for shap value
 from tensorflow import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from keras.wrappers.scikit_learn import KerasRegressor
 
-# tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-# try:
-#     from tensorflow.python.util import module_wrapper as deprecation
-# except ImportError:
-#     from tensorflow.python.util import deprecation_wrapper as deprecation
-# deprecation._PER_MODULE_WARNING_LIMIT = 0
-
 from sklearn.ensemble import RandomForestClassifier
 
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
-
-import xgboost as xgb
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.tree import DecisionTreeRegressor
