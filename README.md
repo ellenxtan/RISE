@@ -1,4 +1,6 @@
-Welcome to RISE!
+## Welcome to RISE!
+
+Python package ``RISE`` for paper "RISE: Robust Individualized Decision Learning with Sensitive Variables", which has recently been accepted by NeurIPS 2022 for publication.
 
 ## To install package
 ```py
@@ -97,3 +99,16 @@ p.plot_shap(out_mod, save_path="./")
 ```
 
 <img src="fig_rise.png" alt="fig_rise" width="40%"/>
+
+## Reference
+
+An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
+
+```
+@article{tan2022rise,
+  title={{RISE}: Robust Individualized Decision Learning with Sensitive Variables},
+  author={Tan, Xiaoqing and Qi, Zhengling and Seymour, Christopher W and Tang, Lu},
+  year = {2022},
+  journal = {ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments} 
+}
+```
