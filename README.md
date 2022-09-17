@@ -102,7 +102,7 @@ p.plot_shap(out_mod, save_path="./")
 
 ## Reference
 
-An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
+An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) was presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
 
 ```
 @article{tan2022rise,
