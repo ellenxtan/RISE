@@ -5,6 +5,7 @@ Python package ``RISE`` for paper "RISE: Robust Individualized Decision Learning
 **TL;DR:** We introduce RISE, a robust individualized decision learning framework to improve the worst-case outcomes of individuals caused by sensitive variables that are unavailable at the time of decision.  
 **Keywords:** causal inference, individualized treatment rules, sensitive variables, robustness.  
 
+
 ## To install package
 ```py
 git clone https://github.com/ellenxtan/RISE.git
@@ -103,9 +104,24 @@ p.plot_shap(out_mod, save_path="./")
 
 <img src="fig_rise.png" alt="fig_rise" width="40%"/>
 
-## Reference
+
+## Paper code
+
+Code is under folder `code_for_paper`. Run `script.py` to get started. 
+```
+script.py: starter code
+loop.py: wrapper function for data analysis
+imports.py: imported libraries
+myfuns.py: utility functions
+dat.py: functions for data
+```
+
+
+## Cite
 
 An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) was presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
+
+If you use our code, please cite
 
 ```
 @article{tan2022rise,
