@@ -108,13 +108,13 @@ p.plot_shap(out_mod, save_path="./")
 ## Paper code
 
 Code is under folder `code_for_paper`. Run `script.py` to get started. 
-```
-script.py: starter code
-loop.py: wrapper function for data analysis
-imports.py: imported libraries
-myfuns.py: utility functions
-dat.py: functions for data
-```
+
+- `script.py`: starter code
+- `loop.py`: wrapper function for data analysis
+- `imports.py`: imported libraries
+- `myfuns.py`: utility functions
+- `dat.py`: functions for data
+
 
 
 ## Cite
