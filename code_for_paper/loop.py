@@ -5,7 +5,7 @@ Author: Xiaoqing (Ellen) Tan
 """
 
 from imports import *
-from myfuns_tune import *
+from myfuns import *
 
 # Updated 2022-07-26: call R package
 # conda install -c r rpy2
