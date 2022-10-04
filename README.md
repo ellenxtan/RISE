@@ -3,6 +3,7 @@
 Python package ``RISE`` for paper "RISE: Robust Individualized Decision Learning with Sensitive Variables", which has recently been accepted by **NeurIPS 2022** for publication.
 
 **TL;DR:** We introduce RISE, a robust individualized decision learning framework to improve the worst-case outcomes of individuals caused by sensitive variables that are unavailable at the time of decision.  
+
 **Keywords:** causal inference, individualized treatment rules, sensitive variables, robustness.  
 
 
