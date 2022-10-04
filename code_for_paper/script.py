@@ -12,7 +12,7 @@ Simulation settings
 """
 
 from imports import *
-from sim_loop_tune import *
+from loop import *
 from dat import *
 
 # settings
