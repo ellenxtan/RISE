@@ -625,10 +625,11 @@ def minor_rule(df, use_covars, s_type, S_name):
 
 def expect_reward(df, A_name, minor_name): #, XS_names, pr_a1, fit_ps
     df_use = df.copy()
+    df_use["A_obs"] = np.where(df_use["A"]==1, "yes","no")
     
     minor_df = df_use[df_use[minor_name]==1].reset_index(drop=True).copy()
     rest_df = df_use[df_use[minor_name]==0].reset_index(drop=True).copy()
-
+    
     numer = df_use["Y"] * (df_use["A_obs"] == df_use[A_name]) / df_use["ps"]
     denom = (df_use["A_obs"] == df_use[A_name]) / df_use["ps"]
     reward_all = np.sum(numer) / np.sum(denom)
