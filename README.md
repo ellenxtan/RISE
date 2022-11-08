@@ -129,7 +129,8 @@ If you use our code, please cite
   tan2022rise,
   title={{RISE}: Robust Individualized Decision Learning with Sensitive Variables},
   author={Xiaoqing Tan and Zhengling Qi and Christopher Warren Seymour and Lu Tang},
-  booktitle={Thirty-Sixth Conference on Neural Information Processing Systems},
+  booktitle={Advances in Neural Information Processing Systems},
+  editor={Alice H. Oh and Alekh Agarwal and Danielle Belgrave and Kyunghyun Cho},
   year={2022},
   url={https://openreview.net/forum?id=-IHPcl1ZhF5}
 }
