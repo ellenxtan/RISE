@@ -1,6 +1,6 @@
 ## Welcome to RISE!
 
-Python package ``RISE`` for paper "RISE: Robust Individualized Decision Learning with Sensitive Variables", which has recently been accepted by **NeurIPS 2022** for publication [[paper]](https://openreview.net/forum?id=-IHPcl1ZhF5).
+Python package ``RISE`` for paper "RISE: Robust Individualized Decision Learning with Sensitive Variables", which has recently been accepted by **NeurIPS 2022** for publication [[paper]](https://arxiv.org/abs/2211.06569).
 
 **TL;DR:** We introduce RISE, a robust individualized decision learning framework to improve the worst-case outcomes of individuals caused by sensitive variables that are unavailable at the time of decision.  
 
@@ -119,8 +119,6 @@ Code is under folder `code_for_paper`. Run `script.py` to get started.
 
 
 ## Cite
-
-An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) was presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
 
 If you find this repository useful, please cite:
 
