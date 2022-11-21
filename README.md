@@ -122,7 +122,7 @@ Code is under folder `code_for_paper`. Run `script.py` to get started.
 
 An early [version](https://responsibledecisionmaking.github.io/assets/pdf/papers/08.pdf) was presented at the ICML 2022 Workshop on Responsible Decision Making in Dynamic Environments. 
 
-If you use our code, please cite
+If you find this repository useful, please cite:
 
 ```
 @inproceedings{
